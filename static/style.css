@@ -157,3 +157,27 @@ button:active {
   padding: 40px 20px;
   font-size: 0.95rem;
 }
+
+.auth-container {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  padding: 0 20px;
+}
+
+.auth-container .card {
+  max-width: 400px;
+  margin: 0 auto;
+  width: 100%;
+}
+
+.auth-container .add-form input {
+  width: 100%;
+}
+
+.auth-container .add-form button {
+  width: 100%;
+  padding: 14px;
+  margin-top: 6px;
+}

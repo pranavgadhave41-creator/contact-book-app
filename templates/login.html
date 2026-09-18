@@ -6,9 +6,9 @@
   <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
 </head>
 <body>
-  <div class="container">
+  <div class="container auth-container">
     <h1>📇 Contact Book</h1>
-    <p class="subtitle">Log in to your account</p>
+    <p class="subtitle" style="text-align:center;">Log in to your account</p>
 
     <div class="card">
       {% with messages = get_flashed_messages() %}
