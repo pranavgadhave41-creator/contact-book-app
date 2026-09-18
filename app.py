@@ -17,6 +17,8 @@ def init_db():
     conn.commit()
     conn.close()
 
+init_db()  # <-- moved here, runs every time the app starts (both locally and on Render)
+
 @app.route('/')
 def home():
     search = request.args.get('search', '')
@@ -29,6 +31,7 @@ def home():
     contacts = cursor.fetchall()
     conn.close()
     return render_template('index.html', contacts=contacts, search=search)
+
 @app.route('/add', methods=['POST'])
 def add_contact():
     name = request.form['name'].strip()
@@ -41,16 +44,6 @@ def add_contact():
     conn = sqlite3.connect('contacts.db')
     cursor = conn.cursor()
     cursor.execute('INSERT INTO contacts (name, phone, email) VALUES (?, ?, ?)', (name, phone, email))
-    conn.commit()
-    conn.close()
-
-    return redirect('/')
-
-@app.route('/delete/<int:contact_id>')
-def delete_contact(contact_id):
-    conn = sqlite3.connect('contacts.db')
-    cursor = conn.cursor()
-    cursor.execute('DELETE FROM contacts WHERE id = ?', (contact_id,))
     conn.commit()
     conn.close()
 
@@ -80,6 +73,15 @@ def update_contact(contact_id):
 
     return redirect('/')
 
+@app.route('/delete/<int:contact_id>')
+def delete_contact(contact_id):
+    conn = sqlite3.connect('contacts.db')
+    cursor = conn.cursor()
+    cursor.execute('DELETE FROM contacts WHERE id = ?', (contact_id,))
+    conn.commit()
+    conn.close()
+
+    return redirect('/')
+
 if __name__ == '__main__':
-    init_db()
     app.run(debug=True)
