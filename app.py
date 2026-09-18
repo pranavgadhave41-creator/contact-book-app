@@ -1,34 +1,42 @@
 from flask import Flask, render_template, request, redirect
-import sqlite3
+import psycopg2
+import os
 
 app = Flask(__name__)
 
+DATABASE_URL = os.environ.get('DATABASE_URL')
+
+def get_connection():
+    return psycopg2.connect(DATABASE_URL)
+
 def init_db():
-    conn = sqlite3.connect('contacts.db')
+    conn = get_connection()
     cursor = conn.cursor()
     cursor.execute('''
         CREATE TABLE IF NOT EXISTS contacts (
-            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            id SERIAL PRIMARY KEY,
             name TEXT NOT NULL,
             phone TEXT,
             email TEXT
         )
     ''')
     conn.commit()
+    cursor.close()
     conn.close()
 
-init_db()  # <-- moved here, runs every time the app starts (both locally and on Render)
+init_db()
 
 @app.route('/')
 def home():
     search = request.args.get('search', '')
-    conn = sqlite3.connect('contacts.db')
+    conn = get_connection()
     cursor = conn.cursor()
     if search:
-        cursor.execute('SELECT * FROM contacts WHERE name LIKE ? ORDER BY name', ('%' + search + '%',))
+        cursor.execute('SELECT * FROM contacts WHERE name LIKE %s ORDER BY name', ('%' + search + '%',))
     else:
         cursor.execute('SELECT * FROM contacts ORDER BY name')
     contacts = cursor.fetchall()
+    cursor.close()
     conn.close()
     return render_template('index.html', contacts=contacts, search=search)
 
@@ -41,20 +49,22 @@ def add_contact():
     if not name:
         return redirect('/')
 
-    conn = sqlite3.connect('contacts.db')
+    conn = get_connection()
     cursor = conn.cursor()
-    cursor.execute('INSERT INTO contacts (name, phone, email) VALUES (?, ?, ?)', (name, phone, email))
+    cursor.execute('INSERT INTO contacts (name, phone, email) VALUES (%s, %s, %s)', (name, phone, email))
     conn.commit()
+    cursor.close()
     conn.close()
 
     return redirect('/')
 
 @app.route('/edit/<int:contact_id>')
 def edit_contact(contact_id):
-    conn = sqlite3.connect('contacts.db')
+    conn = get_connection()
     cursor = conn.cursor()
-    cursor.execute('SELECT * FROM contacts WHERE id = ?', (contact_id,))
+    cursor.execute('SELECT * FROM contacts WHERE id = %s', (contact_id,))
     contact = cursor.fetchone()
+    cursor.close()
     conn.close()
     return render_template('edit.html', contact=contact)
 
@@ -64,21 +74,23 @@ def update_contact(contact_id):
     phone = request.form['phone']
     email = request.form['email']
 
-    conn = sqlite3.connect('contacts.db')
+    conn = get_connection()
     cursor = conn.cursor()
-    cursor.execute('UPDATE contacts SET name = ?, phone = ?, email = ? WHERE id = ?',
+    cursor.execute('UPDATE contacts SET name = %s, phone = %s, email = %s WHERE id = %s',
                    (name, phone, email, contact_id))
     conn.commit()
+    cursor.close()
     conn.close()
 
     return redirect('/')
 
 @app.route('/delete/<int:contact_id>')
 def delete_contact(contact_id):
-    conn = sqlite3.connect('contacts.db')
+    conn = get_connection()
     cursor = conn.cursor()
-    cursor.execute('DELETE FROM contacts WHERE id = ?', (contact_id,))
+    cursor.execute('DELETE FROM contacts WHERE id = %s', (contact_id,))
     conn.commit()
+    cursor.close()
     conn.close()
 
     return redirect('/')
