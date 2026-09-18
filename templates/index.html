@@ -6,42 +6,45 @@
   <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
 </head>
 <body>
+  <div class="container">
+    <h1>📇 Contact Book</h1>
+    <p class="subtitle">Keep track of everyone that matters</p>
 
-  <h1>Contact Book</h1>
+    <div class="card">
+      <form class="search-form" action="/" method="GET">
+        <input type="text" name="search" placeholder="Search by name..." value="{{ search }}">
+        <button type="submit">Search</button>
+      </form>
+    </div>
 
-  <form action="/" method="GET">
-    <input type="text" name="search" placeholder="Search by name..." value="{{ search }}">
-    <button type="submit">Search</button>
-  </form>
+    <div class="card">
+      <form class="add-form" action="/add" method="POST">
+        <input type="text" name="name" placeholder="Name" required>
+        <input type="text" name="phone" placeholder="Phone">
+        <input type="email" name="email" placeholder="Email">
+        <button type="submit">Add Contact</button>
+      </form>
+    </div>
 
-  <form action="/add" method="POST">
-    <input type="text" name="name" placeholder="Name" required>
-    <input type="text" name="phone" placeholder="Phone">
-   <input type="email" name="email" placeholder="Email">
-    <button type="submit">Add Contact</button>
-  </form>
-
-  <hr>
-
-  <table border="1">
-    <tr>
-      <th>Name</th>
-      <th>Phone</th>
-      <th>Email</th>
-      <th>Action</th>
-    </tr>
-    {% for contact in contacts %}
-    <tr>
-      <td>{{ contact[1] }}</td>
-      <td>{{ contact[2] }}</td>
-      <td>{{ contact[3] }}</td>
-      <td>
-        <a href="/edit/{{ contact[0] }}">Edit</a> |
-        <a href="/delete/{{ contact[0] }}">Delete</a>
-      </td>
-    </tr>
-    {% endfor %}
-  </table>
-
+    <div class="card">
+      <div class="contact-list">
+        {% for contact in contacts %}
+        <div class="contact-item">
+          <div class="contact-info">
+            <h3>{{ contact[1] }}</h3>
+            <p>📞 {{ contact[2] }}</p>
+            <p>✉️ {{ contact[3] }}</p>
+          </div>
+          <div class="contact-actions">
+            <a class="edit-link" href="/edit/{{ contact[0] }}">Edit</a>
+            <a class="delete-link" href="/delete/{{ contact[0] }}">Delete</a>
+          </div>
+        </div>
+        {% else %}
+        <div class="empty-state">No contacts yet — add your first one above.</div>
+        {% endfor %}
+      </div>
+    </div>
+  </div>
 </body>
 </html>

@@ -6,17 +6,17 @@
   <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
 </head>
 <body>
-
-  <h1>Edit Contact</h1>
-
-  <form action="/update/{{ contact[0] }}" method="POST">
-    <input type="text" name="name" value="{{ contact[1] }}" required>
-    <input type="text" name="phone" value="{{ contact[2] }}">
-    <input type="email" name="email" value="{{ contact[3] }}">
-    <button type="submit">Save Changes</button>
-  </form>
-
-  <a href="/">Back to Contact Book</a>
-
+  <div class="container">
+    <h1>✏️ Edit Contact</h1>
+    <div class="card">
+      <form class="add-form" action="/update/{{ contact[0] }}" method="POST">
+        <input type="text" name="name" value="{{ contact[1] }}" required>
+        <input type="text" name="phone" value="{{ contact[2] }}">
+        <input type="email" name="email" value="{{ contact[3] }}">
+        <button type="submit">Save Changes</button>
+      </form>
+    </div>
+    <p style="text-align:center;"><a href="/" style="color:#6366f1;">← Back to Contact Book</a></p>
+  </div>
 </body>
 </html>
