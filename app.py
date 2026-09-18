@@ -31,9 +31,11 @@ def init_db():
             id SERIAL PRIMARY KEY,
             name TEXT NOT NULL,
             phone TEXT,
-            email TEXT,
-            user_id INTEGER REFERENCES users(id)
+            email TEXT
         )
+    ''')
+    cursor.execute('''
+        ALTER TABLE contacts ADD COLUMN IF NOT EXISTS user_id INTEGER REFERENCES users(id)
     ''')
     conn.commit()
     cursor.close()
